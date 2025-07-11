@@ -2,7 +2,7 @@
 
 ## 📋 概述
 
-`wechatspider_functions.py` 是基于您修正后的微信公众号爬虫代码构建的便捷函数库，提供了简单易用的API来爬取微信公众号文章。
+`wechatspider_functions.py` 提供了简单易用的API来爬取微信公众号文章。
 
 ## 🔧 前置配置
 
