@@ -378,7 +378,7 @@ class WeChatSpider:
         return all_articles
 
 
-    def crawl_recent_articles_to_md(self, days_back=30, max_articles=10, use_selenium=False, account_name=None,auto_save=False):
+    def crawl_recent_articles_to_md(self, days_back=30, max_articles=10,save_hook:callable=None, use_selenium=False, account_name=None,auto_save=False):
         """爬取最近一段时间的文章"""
         target_account = account_name or list(self.FAKEIDS.keys())[0]
         print(f"🚀 开始爬取 {target_account} 最近{days_back}天的文章，最多{max_articles}篇...")
@@ -389,8 +389,13 @@ class WeChatSpider:
 
         page = 0
         total_fetched = 0
+        failed_times = 0
 
         while total_fetched < max_articles:
+            if failed_times >= 3:
+                print("❌ 已无最新文章可爬取")
+                break
+
             print(f"📋 正在获取第{page+1}页文章链接...")
             links = self.fetch_article_links(begin=page*5, count=5, account_name=target_account)
 
@@ -404,10 +409,11 @@ class WeChatSpider:
 
                 temp_time = article["pub_time"]
                 temp_title = article["title"]
-                temp_url = f"./doc/{account_name}/{temp_time}/{temp_title}.md"
+                temp_url = f"./data/{account_name}/{temp_time}/{temp_title}.md"
                 print(f"🔗 处理文章: {temp_url})")
                 if os.path.exists(temp_url):
                     print(f"⚠️ 文章 '{temp_title}' 已存在，跳过")
+                    failed_times += 1
                     continue
 
                 try:
@@ -426,7 +432,9 @@ class WeChatSpider:
 
                         if auto_save:
                             # 保存单个文章到JSON文件
-                            self.save_article_to_md(account_name=target_account,time = date_str,title=temp_title,article=detail)
+                            save_path = self.save_article_to_md(account_name=target_account,time = date_str,title=temp_title,article=detail)
+                        if save_hook and save_path is not None:
+                            save_hook(title = temp_title+".md",content = detail)
 
                         # 添加延迟避免被封
                         time.sleep(random.randint(15, 25))
@@ -435,6 +443,7 @@ class WeChatSpider:
 
                 except Exception as e:
                     print(f"❌ 处理文章时出错: {e}")
+                    failed_times += 1
                     continue
 
             page += 1
@@ -541,7 +550,7 @@ class WeChatSpider:
         """保存article数据到md文件"""
         if not article:
             print("⚠️ 没有数据可保存")
-            return
+            return None
 
         # 清理文件名中的非法字符
         def clean_filename(filename):

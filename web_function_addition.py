@@ -36,7 +36,7 @@ def download_rencent_articles_to_json(spider:WeChatSpider,account_name, top_n=5,
         spider.close_driver()
 
 
-def download_rencent_articles_to_md(spider:WeChatSpider,account_name, top_n=5, days_back=30, use_selenium=False,auto_save=True):
+def download_rencent_articles_to_md(spider:WeChatSpider,account_name,save_hook:callable=None, top_n=5, days_back=30, use_selenium=False,auto_save=True):
     """
     下载指定公众号最近的前N篇文章（按发布时间排序）
 
@@ -56,7 +56,8 @@ def download_rencent_articles_to_md(spider:WeChatSpider,account_name, top_n=5, d
             max_articles=top_n,
             use_selenium=use_selenium,
             account_name=account_name,
-            auto_save=auto_save
+            auto_save=auto_save,
+            save_hook=save_hook
         )
 
         #if articles:
