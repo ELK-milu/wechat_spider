@@ -1,8 +1,7 @@
+import os
 import requests
 
-base_url = "http://localhost/v1"
-key = "dataset-1D8BWciglQNEnBa4kJlSvuo3"
-id = "fa870eaa-a664-428a-8eaf-82b1de8f9092"
+from utils import base_url,key,id
 
 
 def get_database_info():
@@ -31,20 +30,30 @@ def database_post(title, content, database_info):
             "rules": {
                 "pre_processing_rules": [],
                 "segmentation": {
-                    "separator": "#",
+                    "separator": "\n",
                     "max_tokens": 1000,
                     "chunk_overlap": 150
                 },
                 "parent_mode": "full-doc",
                 "subchunk_segmentation": {
-                    "separator": "#",
-                    "max_tokens": 999,
+                    "separator": "\n",
+                    "max_tokens": 1000,
                     "chunk_overlap": 150
                 }
             }
         }
     else:
-        process_rule = {"mode": "automatic"}
+        process_rule ={
+            "mode": "custom",
+            "rules": {
+                "pre_processing_rules": [],
+                "segmentation": {
+                    "separator": "\n\n",
+                    "max_tokens": 1000,
+                    "chunk_overlap": 150
+                }
+            }
+        }
 
     payload = {
         "name": title,

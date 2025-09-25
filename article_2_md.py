@@ -26,14 +26,15 @@ def check_url_valid(url):
         return False
 
 # 将之前的提取逻辑放入一个独立的函数
-def extract_wechat_article_to_markdown(url,time):
+def extract_wechat_article_to_markdown(url,time,filtter_map=True):
     """
     从微信公众号文章 URL 提取 Markdown 内容，包括标题。
     尝试多种方法获取文章标题。
 
     Args:
         url (str): 微信公众号文章的 URL。
-
+        time (str): 文章的发布时间，格式为 "YYYY-MM-DD"。
+        filtter_map (bool): 是否过滤掉文章中的图片，默认为 True。
     Returns:
         str: 转换后的 Markdown 内容（包含标题），如果失败则返回 None。
     """
@@ -73,6 +74,7 @@ def extract_wechat_article_to_markdown(url,time):
                 else:
                     article.article_title = full_title
 
+
         # --- 2. 提取文章发布时间 ---
         if not article.publish_time:
             article.publish_time = time
@@ -85,11 +87,15 @@ def extract_wechat_article_to_markdown(url,time):
 
         # 处理图片 data-src 及清理冗余属性
         for img in article_content_div.find_all('img'):
-            if 'data-src' in img.attrs:
-                img['src'] = img['data-src']
-            for attr in ['data-type', 'data-w', 'data-ratio', 'style']:
-                if attr in img.attrs:
-                    del img[attr]
+            if not filtter_map:
+                if 'data-src' in img.attrs:
+                    img['src'] = img['data-src']
+                for attr in ['data-type', 'data-w', 'data-ratio', 'style']:
+                    if attr in img.attrs:
+                        del img[attr]
+            else:
+                img.decompose()  # 彻底移除图片标签
+
 
         # 移除无关紧要的 script 和 style 标签
         for s in article_content_div(['script', 'style', 'noscript']):

@@ -25,10 +25,7 @@ class WeChatSpider:
     def __init__(self):
         # ===【配置项 - 基于用户修正后的代码】===
         self.FAKEIDS = {
-            #"粤政会计": "MzAxNTM0NzU1Ng==",
             "聚光科技": "MzA3MzEwOTAxOQ==",
-            #"瑞幸咖啡": "MzUxNDQ2OTc2MQ==",
-            #"威科先行": "MzA5MDAyODcwMQ=="
         }
         self.chrome_driver_path = r"D:\各种installer\chormDriver\chromedriver-win64\chromedriver-win64\chromedriver.exe"
         # 使用用户修正后的配置
@@ -378,7 +375,7 @@ class WeChatSpider:
         return all_articles
 
 
-    def crawl_recent_articles_to_md(self, days_back=30, max_articles=10,save_hook:callable=None, use_selenium=False, account_name=None,auto_save=False):
+    def crawl_recent_articles_to_md(self, days_back=30, max_articles=10,save_hook:callable=None, use_selenium=False, account_name=None,auto_save=False,auto_stop=False):
         """爬取最近一段时间的文章"""
         target_account = account_name or list(self.FAKEIDS.keys())[0]
         print(f"🚀 开始爬取 {target_account} 最近{days_back}天的文章，最多{max_articles}篇...")
@@ -392,9 +389,11 @@ class WeChatSpider:
         failed_times = 0
 
         while total_fetched < max_articles:
-            if failed_times >= 3:
-                print("❌ 已无最新文章可爬取")
-                break
+
+            if auto_stop:
+                if failed_times >= 3:
+                    print("❌ 已无最新文章可爬取")
+                    break
 
             print(f"📋 正在获取第{page+1}页文章链接...")
             links = self.fetch_article_links(begin=page*5, count=5, account_name=target_account)

@@ -14,4 +14,4 @@ if __name__ == "__main__":
     spider.chrome_driver_path = "C:\Program Files\Google\Chrome\Application\chromedriver\chromedriver.exe"
     spider.TOKEN = infos.get("token")
     spider.COOKIE = infos.get("cookie")
-    download_rencent_articles_to_md(spider, "聚光科技", top_n=9999, days_back=9999, use_selenium=True,save_hook=datebase_post_pipeline)
+    download_rencent_articles_to_md(spider, "聚光科技", top_n=9999, days_back=9999, use_selenium=True,save_hook=datebase_post_pipeline,auto_stop=False)
