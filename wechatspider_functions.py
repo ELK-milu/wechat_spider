@@ -345,8 +345,8 @@ def download_top_articles(account_name, top_n=5, days_back=30, use_selenium=Fals
         )
         
         if articles:
-            spider.save_to_json(account_name=account_name)
-            spider.save_to_excel(account_name=account_name)
+            spider.save_to_json_single_File(account_name=account_name)
+            #spider.save_to_excel(account_name=account_name)
         
         return articles
     except Exception as e:
@@ -354,6 +354,8 @@ def download_top_articles(account_name, top_n=5, days_back=30, use_selenium=Fals
         return []
     finally:
         spider.close_driver()
+
+
 
 def get_article_summary(account_name, days_back=7):
     """
@@ -382,7 +384,7 @@ def get_article_summary(account_name, days_back=7):
                 break
             
             for link in page_links:
-                pub_dt = datetime.datetime.strptime(link["pub_time"], "%Y-%m-%d %H:%M:%S")
+                pub_dt = datetime.datetime.strptime(link["pub_time"], "%Y-%m-%d")
                 if pub_dt >= cutoff_date:
                     links.append(link)
                 else:

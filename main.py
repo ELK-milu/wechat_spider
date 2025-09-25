@@ -1,0 +1,12 @@
+from web_function_addition import download_rencent_articles_to_json, download_rencent_articles_to_md
+from wechatspider_fixed import WeChatSpider
+
+if __name__ == "__main__":
+    spider = WeChatSpider()
+    spider.FAKEIDS = {
+        "聚光科技": "MzA3MzEwOTAxOQ==",
+    }
+    spider.chrome_driver_path = "C:\Program Files\Google\Chrome\Application\chromedriver\chromedriver.exe"
+    spider.TOKEN = "97197785"
+    spider.COOKIE = "pgv_pvid=8898906321; RK=ScNFh3Rq8V; ptcz=22590a12a8e18cc94980e9eb09c767ed7b6ccf56c9207baf45a206f07c77a450; pac_uid=0_ccQAAksry1Ftm; _qimei_uuid42=192130a1c22100a53345d4972209f34e387a197eaf; _qimei_fingerprint=041da21d25c5068368e56d1e1ad58716; _qimei_h38=8f95fb0e3345d4972209f34e0200000e719213; suid=user_0_ccQAAksry1Ftm; qq_domain_video_guid_verify=82e6441ef09fd035; _qimei_q32=06cf930e956c8a7ee7f1febc85e3dc8e; _qimei_q36=b46e45efc8afb74fcfa9f02130001fc19419; omgid=0_ccQAAksry1Ftm; ua_id=xHtW305mySbToIGDAAAAAC7dd7XVTFRXoaetlUE_nfM=; wxuin=53933276328488; mm_lang=zh_CN; yyb_muid=3A5F65E1CB6B64123F867075CA286545; _qpsvr_localtk=0.9983187198729786; ptui_loginuin=2636626273@qq.com; uuid=bb9ea7a523b4ffd58e1879d48cb76e25; rand_info=CAESIKxFhlWjYTqL3ndS6e/3jqedCiiQkcKlaaQi9WzcBBfm; slave_bizuin=3861526152; data_bizuin=3861526152; bizuin=3861526152; data_ticket=972KIP3Mstybqv6OtSAKbhOYtORVT1LZrMco65I5PkxDJ4gjkh0WdjUiN7MS17m2; slave_sid=YXRrNGNtVzdGN1BpRWZMXzBjdWVqaFBBUE1XUG1Xcjc2WWxsbjVWVk1CeldJVWQ3RHRqbjNoMWJrZEV6WGt5WkxkZ2FleHl3bGxDNUl1Y1ZRNHRCZGRPajJqejltSkk5YkJfX3dPc29rMGZqZTdTWExxbEVWUkc5bzZCc3JHTGdWcnd5Y1hmRkVKY3VQd0dE; slave_user=gh_9645c6c4cd12; xid=23e88d9705ae26b81201275c5adce375; _hp2_id.1405110977=%7B%22userId%22%3A%226124001697016164%22%2C%22pageviewId%22%3A%22361725687492262%22%2C%22sessionId%22%3A%222514088114775888%22%2C%22identity%22%3Anull%2C%22trackerVersion%22%3A%224.0%22%7D; _clck=3861526152|1|fzl|0; mmad_session=76abe38f61d4e3401aa870baf19ebc72dee8412927545ea1bc1bb8f385f91a313913e67e75b8cc1ad4d6c09d03d7cd731dceeae38b5028071fd999c4046947613f97b5fd2da4e00926f02a3f85624ee69696807da9b322e36866d5a5ebfa7b1211de1c56c245721266e7088080fefde3; _clsk=ou47vy|1758697939803|10|1|mp.weixin.qq.com/weheat-agent/payload/record"
+    download_rencent_articles_to_md(spider, "聚光科技", top_n=9999, days_back=9999, use_selenium=True)
