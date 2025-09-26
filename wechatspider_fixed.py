@@ -54,6 +54,98 @@ class WeChatSpider:
         self.articles = []
         self.driver = None
 
+    def fetch_article_hyperlinks(self, begin=0, count=5, account_name=None):
+        """获取文章链接列表 - 使用用户修正后的API和参数"""
+        # 确定使用哪个公众号
+        if account_name and account_name in self.FAKEIDS:
+            target_fakeid = self.FAKEIDS[account_name]
+            target_name = account_name
+        else:
+            target_name = list(self.FAKEIDS.keys())[0]
+            target_fakeid = self.FAKEIDS[target_name]
+
+        # 使用用户修正后的URL和参数结构
+        url = "https://mp.weixin.qq.com/cgi-bin/appmsgpublish"
+
+        data = {
+            "sub": 'list',
+            "query": '',
+            "begin": begin,
+            "count": count,  # 每页尝试获取最多20篇
+            "type": "101_1",
+            "free_publish_type": "1",
+            "search_field": None,
+            "sub_action": 'list_ex',
+            "fakeid": target_fakeid,
+            "lang": "zh_CN",
+            "f": "json",
+            "ajax": 1,
+            "token": self.TOKEN,
+        }
+
+        # 随机选择User-Agent
+        user_agent = random.choice(self.USER_AGENT_LIST)
+        headers = {
+            "Cookie": self.COOKIE,
+            "User-Agent": user_agent,
+        }
+
+        try:
+            print(f"📡 请求文章链接: {target_name}")
+            response = requests.get(url, headers=headers, params=data)
+
+            if response.status_code != 200:
+                print(f"请求失败: {response.status_code}")
+                return []
+
+            content_json = response.json()
+            print(f"response: {content_json}")
+            # 检查返回结果
+            if "publish_page" not in content_json:
+                print(f"返回数据异常: {content_json}")
+                return []
+
+            results = []
+            # 解析外层JSON
+            publish_page_str = content_json.get('publish_page', '{}')
+            publish_page = json.loads(publish_page_str)
+
+            # 获取文章列表
+            publish_list = publish_page.get('publish_list', [])
+
+            for item in publish_list:
+                publish_info_str = item.get('publish_info', '{}')
+
+                publish_info = json.loads(publish_info_str)
+
+                # 获取文章详细信息
+                appmsgex = publish_info.get('appmsgex', [])
+
+                for article in appmsgex:
+                    # 提取所需字段
+                    title = article.get('title', '')
+                    link = article.get('link', '')
+                    author_name = article.get('author_name', '')
+
+                    # 获取发布时间（优先使用publish_info中的create_time）
+                    temp_time = publish_info.get('publish_info', {}).get('create_time', 0)
+                    t = time.localtime(temp_time)
+                    pub_time = time.strftime("%Y-%m-%d", t)
+                    # 构建文章字典
+                    article_dict = {
+                        "title": title,
+                        "url": link,
+                        "pub_time": pub_time,
+                        "account_name": author_name
+                    }
+
+                    results.append(article_dict)
+            return results
+
+        except Exception as e:
+            print(f"❌ 获取文章链接失败: {e}")
+            return []
+
     def fetch_article_links(self, begin=0, count=5, account_name=None):
         """获取文章链接列表 - 使用用户修正后的API和参数"""
         # 确定使用哪个公众号
@@ -396,7 +488,7 @@ class WeChatSpider:
                     break
 
             print(f"📋 正在获取第{page+1}页文章链接...")
-            links = self.fetch_article_links(begin=page*5, count=5, account_name=target_account)
+            links = self.fetch_article_hyperlinks(begin=page*5, count=5, account_name=target_account)
 
             if not links:
                 print("📄 没有更多文章了")
