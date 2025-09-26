@@ -15,7 +15,7 @@ __params = {
     "f": "json",
 }
 
-def get_fakeid(nickname):
+def get_fakeid(nickname,token):
     """获取微信公众号的 fakeid"""
     search_url = "https://mp.weixin.qq.com/cgi-bin/searchbiz"
 
@@ -27,7 +27,7 @@ def get_fakeid(nickname):
         "ajax": "1",
         "lang": "zh_CN",
         "f": "json",
-        "token": __params.get("token"),
+        "token": token,
     }
 
     try:

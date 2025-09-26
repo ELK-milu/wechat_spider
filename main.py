@@ -5,14 +5,21 @@ from wechatspider_fixed import WeChatSpider
 
 
 if __name__ == "__main__":
+    # 目前暂时只支持单个公众号爬取
+    pulisher_name = "聚光科技"
+
     loginer = WeChatLogin()
-    infos = loginer.gzhlogin()
     spider = WeChatSpider()
     dify_knowledge = DifyKnowledgeBase()
-    spider.FAKEIDS = {
-        "聚光科技": "MzA3MzEwOTAxOQ==",
-    }
+
+    infos = loginer.gzhlogin()
+
     spider.chrome_driver_path = "C:\Program Files\Google\Chrome\Application\chromedriver\chromedriver.exe"
     spider.TOKEN = infos.get("token")
     spider.COOKIE = infos.get("cookie")
-    download_rencent_articles_to_md(spider, "聚光科技", top_n=9999, days_back=9999, use_selenium=True,save_hook=dify_knowledge.datebase_post_pipeline,auto_stop=False)
+
+    spider.FAKEIDS = {
+        pulisher_name: spider.get_fakeid(pulisher_name),
+    }
+
+    download_rencent_articles_to_md(spider, pulisher_name, top_n=9999, days_back=9999, use_selenium=True,save_hook=dify_knowledge.datebase_post_pipeline,auto_stop=False)

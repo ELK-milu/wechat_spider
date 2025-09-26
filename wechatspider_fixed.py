@@ -54,6 +54,46 @@ class WeChatSpider:
         self.articles = []
         self.driver = None
 
+    def get_headers(self):
+        user_agent = random.choice(self.USER_AGENT_LIST)
+        headers = {
+            "Cookie": self.COOKIE,
+            "User-Agent": user_agent,
+        }
+        return headers
+
+    def get_fakeid(self,nickname):
+        """获取微信公众号的 fakeid"""
+        search_url = "https://mp.weixin.qq.com/cgi-bin/searchbiz"
+
+        params = {
+            "action": "search_biz",
+            "query": nickname,
+            "begin": 0,
+            "count": 1,
+            "ajax": "1",
+            "lang": "zh_CN",
+            "f": "json",
+            "token": self.TOKEN,
+        }
+
+        try:
+            response = requests.get(search_url, headers=self.get_headers(), params=params)
+            response.raise_for_status()
+            data = response.json()
+
+            if "list" in data and data["list"]:
+                print(f"获取到 {nickname} 的 fakeid: {data['list'][0]['fakeid']}")
+                return data["list"][0].get('fakeid')
+            return None
+        except requests.exceptions.RequestException as e:
+            print(f"请求失败: {e}")
+            return None
+        except Exception as e:
+            print(f"解析公众号 {nickname} 的 fakeid 失败")
+            return None
+
+
     def fetch_article_hyperlinks(self, begin=0, count=5, account_name=None):
         """获取文章链接列表 - 使用用户修正后的API和参数"""
         # 确定使用哪个公众号
