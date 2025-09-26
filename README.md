@@ -1,5 +1,20 @@
 # wechatspider_functions.py 使用指南
 
+## 区分于原版的分支特性
+* 做了简单的类封装
+* 支持微信文章转为md
+* 对所有文章都是抓取后立即保存，而非全部抓取再保存
+* 支持加入抓取后自定义hook函数，方便使用RAG处理等进行知识库添加
+* 集成Dify知识库API接口
+* 通过扫码登录自动获取token和cookie
+* 使用.env环境变量配置
+
+## 快速开始
+![](./static/img/knowledge_id.png)
+在`.env`文件中填写dify的API_URL，KNOWLEDGE_BASE_ID，API_KEY。可向对应的知识库添加内容。
+打开`main.py`，可配置需要抓取的公众号（单个抓取，暂不支持多个抓取）
+`dify_knowledgebase.py`中可查看DifyKnowledgeBase类定义，可进行RAG分段配置
+
 ## 📋 概述
 
 `wechatspider_functions.py` 提供了简单易用的API来爬取微信公众号文章。
