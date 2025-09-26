@@ -171,7 +171,6 @@ class WeChatSpider:
                     temp_time = publish_info.get('publish_info', {}).get('create_time', 0)
                     if temp_time == 0:
                         temp_time = publish_info.get('sent_info', {}).get('time', 0)
-                    print("temp_time:", temp_time)
                     t = time.localtime(temp_time)
                     pub_time = time.strftime("%Y-%m-%d", t)
                     # 构建文章字典
