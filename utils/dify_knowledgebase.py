@@ -21,7 +21,7 @@ class DifyKnowledgeBase:
     def get_database_info(self):
         url = f"{self.base_url}/datasets/{self.id}"
         headers = {"Authorization": f"Bearer {self.key}"}
-        response = requests.get(self.url, headers=headers)
+        response = requests.get(url, headers=headers)
         print(response.json())
         return response.json()
 
@@ -30,7 +30,7 @@ class DifyKnowledgeBase:
         '''将保存的文件通过路径的形式传输给database'''
         import requests
 
-        url = f"{base_url}/datasets/{id}/document/create-by-text"
+        url = f"{self.base_url}/datasets/{self.id}/document/create-by-text"
 
         # 从数据库信息中提取相关字段
         retrieval_model_info = database_info.get("retrieval_model_dict", {})
@@ -98,7 +98,7 @@ class DifyKnowledgeBase:
         }
 
         headers = {
-            "Authorization": f"Bearer {key}",
+            "Authorization": f"Bearer {self.key}",
             "Content-Type": "application/json"
         }
 
